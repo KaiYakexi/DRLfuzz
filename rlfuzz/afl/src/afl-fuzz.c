@@ -1861,6 +1861,9 @@ int main(int argc, char **argv_orig, char **envp) {
 
   setup_dirs_fds(afl);
 
+
+  if (afl->use_rlfuzz != 0) setup_rlfuzz_dirs(afl);
+
   #ifdef HAVE_AFFINITY
   bind_to_free_cpu(afl);
   #endif                                                   /* HAVE_AFFINITY */
@@ -2974,6 +2977,11 @@ stop_fuzzing:
   fclose(afl->fsrv.plot_file);
   destroy_queue(afl);
   destroy_extras(afl);
+
+  if (afl->use_rlfuzz != 0) {
+    destroy_rl(afl);
+  }
+
   destroy_custom_mutators(afl);
   afl_shm_deinit(&afl->shm);
 
