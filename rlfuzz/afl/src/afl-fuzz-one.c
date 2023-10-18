@@ -9342,10 +9342,11 @@ u8 fuzz_one(afl_state_t *afl) {
        limit_time_sig  > 0 then run MOpt
        limit_time_sig  < 0 both are run
   */
+  if (afl->use_rlfuzz != 0) { key_val_lv_1 = fuzz_one_rl(afl); }
 
-  if (afl->limit_time_sig <= 0) { key_val_lv_1 = fuzz_one_original(afl); }
+  else if (afl->limit_time_sig <= 0) { key_val_lv_1 = fuzz_one_original(afl); }
 
-  if (afl->limit_time_sig != 0) {
+  else if (afl->limit_time_sig != 0) {
 
     if (afl->key_module == 0) {
 
@@ -9363,8 +9364,8 @@ u8 fuzz_one(afl_state_t *afl) {
 
   }
 
-  if (unlikely(key_val_lv_1 == -1)) { key_val_lv_1 = 0; }
-  if (likely(key_val_lv_2 == -1)) { key_val_lv_2 = 0; }
+  else if (unlikely(key_val_lv_1 == -1)) { key_val_lv_1 = 0; }
+  else if (likely(key_val_lv_2 == -1)) { key_val_lv_2 = 0; }
 
   return (key_val_lv_1 | key_val_lv_2);
 
