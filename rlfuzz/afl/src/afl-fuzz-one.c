@@ -6170,7 +6170,7 @@ void pso_updating(afl_state_t *afl) {
 
 
 
-u8 fuzz_one_original(afl_state_t *afl) {
+u8 fuzz_one_rl(afl_state_t *afl) {
 
   u32 len, temp_len;
   u32 j;
