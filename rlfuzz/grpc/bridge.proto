@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package fuzzing;
+
+service FuzzerService {
+  rpc SendStats (FuzzerStats) returns (MutationResponse);
+  rpc SendSeed (SeedData) returns (MutationResponse);
+}
+
+message FuzzerStats {
+  int32 current_coverage;
+  int32 total_coverage;
+  int32 seed_caused_crashes;
+  int32 total_crashes;
+}
+
+message SeedData {
+  string mutated_seed;
+}
+
+message MutationResponse {
+  string mutated_seed;
+}
