@@ -2,22 +2,17 @@ syntax = "proto3";
 
 package fuzzing;
 
-service FuzzerService {
+service AFLPPService {
   rpc SendStats (FuzzerStats) returns (MutationResponse);
-  rpc SendSeed (SeedData) returns (MutationResponse);
 }
 
 message FuzzerStats {
-  int32 current_coverage;
-  int32 total_coverage;
-  int32 seed_caused_crashes;
-  int32 total_crashes;
-}
-
-message SeedData {
   string mutated_seed;
+  int32 number_of_current_total_coverage;
+  int32 number_of_unique_coverage_found;
+  int32 number_of_crash_caused;
 }
 
 message MutationResponse {
-  string mutated_seed;
+  int32 mutation_selected;
 }
