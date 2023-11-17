@@ -7935,6 +7935,8 @@ havoc_stage:
   u32 *mutation_array;
   u32  stack_max, rand_max;  // stack_max_pow = afl->havoc_stack_pow2;
 
+// REINFORCE
+#if 0:
   switch (afl->input_mode) {
 
     case 1: {  // TEXT
@@ -7992,7 +7994,26 @@ havoc_stage:
     }
 
   }
+#endif
 
+  static int first_run = 1;
+  u32 mutation_from_python;
+  mutation_array = mine_array;
+  rand_max = MUT_MINE_ARRAY_SIZE;
+  if (first_run) {
+      first_run = 0;
+     //randomize 6 mutations
+     for (int i = 0; i < rand_max; i++) {
+          mutation_array[i] = rand_below(afl, MUT_MAX);
+     }
+  } else {
+    int32_t recv_mutation();
+    mutation_from_python = recv_mutation();
+    //copy mutation_from_python to 6 same mutaions
+     for (int i = 0; i < rand_max; i++) {
+          mutation_array[i] = mutation_from_python;
+     }
+  }
   /*
   if (temp_len < 64) {
 

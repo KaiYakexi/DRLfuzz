@@ -78,6 +78,10 @@ enum {
 
 };
 
+//REFORCE
+#define MUT_MINE_ARRAY_SIZE 6
+u32 mine_array[MUT_MINE_ARRAY_SIZE];
+
 #define MUT_TXT_ARRAY_SIZE 200
 u32 text_array[MUT_TXT_ARRAY_SIZE] = {MUT_FLIPBIT,
                                       MUT_FLIPBIT,

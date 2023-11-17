@@ -788,6 +788,11 @@ typedef struct afl_state {
   u32   bitsmap_size;
 #endif
 
+/* Paramteres/values used for rl */
+  s32 use_rlfuzz;     
+
+  u32 queue_cnt;
+
 } afl_state_t;
 
 struct custom_mutator {

@@ -664,6 +664,13 @@ void add_to_queue(afl_state_t *afl, u8 *fname, u32 len, u8 passed_det) {
 
   }
 
+/* REINFORCE */
+  if (afl->queue_cnt > 0 && afl->use_rlfuzz != 0) {
+    int send_reward_testcase(uint32_t coverage, uint8_t edge, uint32_t crash, const void* testcase, uint32_t len);
+    send_reward_testcase(q->bitmap_size, q->trace_mini, q->tc_ref, q->testcase_buf, len);
+
+  }
+
 }
 
 /* Destroy the entire queue. */

@@ -3,12 +3,38 @@ from gym import spaces
 import random
 from mutators import *
 
+in_fifo_file = 'fifo1'
+out_fifo_file = 'fifo2'
+in_fifo_fd = None
+out_fifo_fd = None
+
+def open_pipe(in_fifo = in_fifo_file, out_fifo = out_fifo_file):
+    in_fifo_fd = open(in_fifo_file, 'rb')
+    out_fifo_fd = open(out_fifo_file, 'wb')
+    
+def send_mutation(mutation, fd = out_fifo_fd):
+    send_bytes = mutation.to_bytes(4, 'little')
+    fd.write(send_bytes)
+    fd.flush()
+
+def recv_reward_testcase(fd = in_fifo_file):
+    head = fd.read(13)
+    coverage = int.from_bytes(head[:4], 'little')
+    edge = int.from_bytes(head[4:5], 'little')
+    crash = int.from_bytes(head[5:9], 'little')
+    length = int.from_bytes(head[9:13], 'little')
+    testcase = fd.read(length) #bytes #tensor
+    zero_length = 4096 - length
+    testcase = testcase + b'\x00' * zero_length
+    #testcase = list(map(int, testcase))
+    return (coverage, edge, crash, testcase)
+
 class AFLppFuzzEnv(gym.Env):
     def __init__(self, input_maxsize, max_steps):
         super(AFLppFuzzEnv, self).__init()
         
         # Initialize environment parameters
-        self.input_max_size = input_maxsize  # The maximum states we can observe
+        self.input_max_size =  # The maximum states we can observe
         self.max_steps = max_steps  # Maximum number of steps for an episode
         self.current_step = 0
 
@@ -31,7 +57,8 @@ class AFLppFuzzEnv(gym.Env):
         self.number_of_unique_crash_caused = 0
 
         # Initialize the current_seed with an initial seed
-        self.current_seed = mutant  
+        coverage, edge, crash, testcase = self.recv_reward_testcase()
+        self.current_seed = testcase
 
         self.number_of_unique_coverage_found = 0
         self.number_of_unique_crash_caused = 0
@@ -42,36 +69,22 @@ class AFLppFuzzEnv(gym.Env):
         return self.current_seed
 
     def step(self, action):
-        info = self.step_raw(action)
+        new_state = 
 
-        reward = 0.0
-        done = False
-        c = info['step_coverage']
 
-        # Calculate reward based on transition count
-        reward = calculate_reward()
-
-        # Check for coverage changes
-        old_path_count = self.number_of_current_total_coverage
-        self.number_of_current_total_coverage += c.transition_count()
-        new_path_count = self.number_of_current_total_coverage
-
-        # Check if the episode is done (e.g., when there's no new coverage)
-        if old_path_count == new_path_count:
-            done = True
-
-        # Update the environment state and provide additional info
-        self.current_seed = info['input_data']
-        info['total_coverage'] = self.number_of_current_total_coverage
+        done = self.current_step >= self.max_steps
 
         return self.current_seed, reward, done, info
 
-    def calculate_reward(self, seed, method):
-        prev_coverage = self.number_of_current_total_coverage
-        current_coverage = self.number_of_caused_coverage
-        reward = current_coverage - prev_coverage
-        self.number_of_caused_coverage = current_coverage
+    def render(self, mode='human', close=False):
+        pass
 
-        return reward
+    def eof(self):
+        return self._dict.eof()
 
+    def dict_size(self):
+        return self._dict.size()
+
+    def input_size(self):
+        return self._input_size
         
